@@ -100,6 +100,7 @@ BatMobil.game = (function () {
  
     var Skybox = require('./skybox');
     var Camera = require('./camera');
+    var Tree = require('./elements/tree');
 
 
     fpsBox = document.getElementById('fps');
@@ -108,7 +109,7 @@ BatMobil.game = (function () {
    
     var treeCollection = [];
     createScene = function () {
-        var scene, camera, light, cylinder, ground, skybox;
+        var scene, camera, light, tree, treeClone, ground, skybox, shadowGenerator;
 
         scene = new BABYLON.Scene(engine);
         scene.clearColor = new BABYLON.Color3(0, 0.2, 0.2);
@@ -125,41 +126,26 @@ BatMobil.game = (function () {
         camera = new Camera(scene, canvas);
         skybox = new Skybox(scene);
 
-        //light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, .1, 0), scene);
         light = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(-1, -1, -2), scene);
         light.intensity = .21;
         light.position = new BABYLON.Vector3(-300,300,600);
-        var shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
+        shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
 
-        var treeMaterial = new BABYLON.StandardMaterial("texture1", scene);
-        treeMaterial.diffuseTexture = new BABYLON.Texture("assets/images/tree.jpg", scene);
-
-
-        //treeMaterial.diffuseColor = new BABYLON.Color3(1.0, 0.2, 0.7);
-        
-        cylinder = BABYLON.Mesh.CreateCylinder("CreateBox", 15, 1, 1, 8, 1, scene, false);
-        cylinder.position.y = 7.5;
-        cylinder.position.x = -50 + Math.random() * 100;
-        cylinder.position.z = -50 + Math.random() * 100;
-        cylinder.setEnabled(false);
-        
-        cylinder.material = treeMaterial;
-        //cylinder.checkCollisions = true;
-
-        for(var i = 0; i < 50; i++) {
-            var cylinderClone = cylinder.clone('clonedCylinder'+i);
-            cylinderClone.position = new BABYLON.Vector3(-50 + Math.random() * 100, 7.5, -50 + Math.random() * 100);
-            shadowGenerator.getShadowMap().renderList.push(cylinderClone);
-            treeCollection.push(cylinderClone);
+        tree = new Tree(scene);
+        for(var i = 0; i < 70; i++) {
+            treeClone = tree.clone('clonedTree'+i);
+            treeClone.position = new BABYLON.Vector3(-50 + Math.random() * 100, 7.5, -50 + Math.random() * 100);
+            shadowGenerator.getShadowMap().renderList.push(treeClone);
         }
-        
-        ground = BABYLON.Mesh.CreateGround("ground1", 100, 100, 2, scene);
+
+        ground = BABYLON.Mesh.CreateGround("ground1", 100, 100, 1, scene);
         ground.checkCollisions = true;
         ground.receiveShadows = true;
-       var maze = new BABYLON.VertexData();
-       maze.merge("maze", treeCollection, scene);
-        //var maze = BABYLON.VertexData.
-        console.log(maze)
+        ground.material = new BABYLON.StandardMaterial("ground", scene);
+        ground.material.diffuseTexture = new BABYLON.Texture("assets/images/floor.jpg", scene);
+        ground.material.diffuseTexture.uScale = 60;
+        ground.material.diffuseTexture.vScale = 60;
+
         return scene;
     };
     scene = createScene();

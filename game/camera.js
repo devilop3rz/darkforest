@@ -3,7 +3,7 @@ module.exports = function (scene, canvas) {
 
     var camera, pointerlockchange;
 
-    camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 2, 0), scene);
+    camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 1.7, 0), scene);
     camera.setTarget(BABYLON.Vector3.Zero());
     camera.attachControl(canvas, false);
     camera.applyGravity = true;
